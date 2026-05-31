@@ -3,26 +3,40 @@ import unittest
 from htmlnode import HTMLNode, LeafNode, ParentNode
 
 class TestHTMLNode(unittest.TestCase):
-    def test_html_prop_to_html(self):
-        node = HTMLNode("p", "Hello World", props={"class": "my-class"})
-        self.assertEqual(node._prop_to_html(), "class=\"my-class\"")
-
-    def test_html_prop_to_html_multiple(self):
-        node = HTMLNode("p", "Hello World", props={"class": "my-class", "id": "my-id"})
-        self.assertEqual(node._prop_to_html(), "class=\"my-class\" id=\"my-id\"")
-
-    def test_html_prop_to_html_none(self):
-        node = HTMLNode("p", "Hello World")
-        self.assertEqual(node._prop_to_html(), "")
-
-    def test_html_repr(self):
-        node = HTMLNode("p", "Hello World")
-        self.assertEqual(node.__repr__(), "HTMLNode(p, Hello World, None, None)")
-
     def test_html_to_html_not_implemented(self):
         node = HTMLNode("p", "Hello World")
         with self.assertRaises(NotImplementedError):
             node.to_html()
+
+    def test_html_props_to_html(self):
+        node = HTMLNode("p", "Hello World", props={"class": "my-class"})
+        self.assertEqual(node.props_to_html(), ' class="my-class"')
+
+    def test_html_props_to_html_multiple(self):
+        node = HTMLNode("p", "Hello World", props={"class": "my-class", "id": "my-id"})
+        self.assertEqual(node.props_to_html(), ' class="my-class" id="my-id"')
+
+    def test_html_props_to_html_none(self):
+        node = HTMLNode("p", "Hello World")
+        self.assertEqual(node.props_to_html(), "")
+
+    def test_props_to_html_leading_space(self):
+        node = HTMLNode(
+            "a",
+            "Click me",
+            None,
+            {"href": "https://www.google.com"},
+        )
+        result = node.props_to_html()
+        self.assertTrue(
+            result.startswith(" "),
+            f"Expected props_to_html to start with a space, got: '{result}'"
+        )
+        self.assertEqual(result, ' href="https://www.google.com"')
+
+    def test_html_repr(self):
+        node = HTMLNode("p", "Hello World")
+        self.assertEqual(node.__repr__(), "HTMLNode(p, Hello World, None, None)")
 
 class TestLeafNode(unittest.TestCase):
     def test_leaf_to_html(self):
@@ -31,7 +45,12 @@ class TestLeafNode(unittest.TestCase):
     
     def test_leaf_to_html_with_props(self):
         node = LeafNode("p", "Hello World", props={"class": "my-class"})
-        self.assertEqual(node.to_html(), "<p class=\"my-class\">Hello World</p>")
+        self.assertEqual(node.to_html(), '<p class="my-class">Hello World</p>')
+
+    def test_leaf_to_html_a(self):
+        node = LeafNode("a", "Click me", props={"href": "https://www.google.com"})
+        self.assertEqual(
+            node.to_html(), '<a href="https://www.google.com">Click me</a>')   
     
     def test_leaf_no_tag(self):
         node = LeafNode(None, "Hello World")
@@ -53,7 +72,7 @@ class TestParentNode(unittest.TestCase):
     
     def test_parent_to_html_with_props(self):
         node = ParentNode("p", [LeafNode("b", "Hello"), LeafNode("i", "World")], props={"class": "my-class"})
-        self.assertEqual(node.to_html(), "<p class=\"my-class\"><b>Hello</b><i>World</i></p>")
+        self.assertEqual(node.to_html(), '<p class="my-class"><b>Hello</b><i>World</i></p>')
     
     def test_parent_no_tag(self):
         node = ParentNode(None, [LeafNode("b", "Hello"), LeafNode("i", "World")])
@@ -71,7 +90,7 @@ class TestParentNode(unittest.TestCase):
 
     def test_parent_to_html_nested_with_props(self):
         node = ParentNode("div", [LeafNode("p", "Hello"), ParentNode("span", [LeafNode("b", "World")], props={"class": "my-class"})])
-        self.assertEqual(node.to_html(), "<div><p>Hello</p><span class=\"my-class\"><b>World</b></span></div>")
+        self.assertEqual(node.to_html(), '<div><p>Hello</p><span class="my-class"><b>World</b></span></div>')
 
     def test_parent_with_empty_children(self):
         node = ParentNode("div", [])
