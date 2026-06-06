@@ -342,6 +342,4 @@ class TestTextToTextnodes(unittest.TestCase):
                 TextNode("link", TextType.LINK, "url"),
             ]
         )
-
-if __name__ == "__main__":
-    unittest.main()
+    
