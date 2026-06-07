@@ -4,8 +4,27 @@ Provides utilities to generate HTML pages from Markdown content.
 Note: This module, alongside `copystatic.py`, exposes the core functionalities 
 orchestrated by the `main.py` entrypoint to build the static site.
 """
-import os
+from os import listdir, mkdir, makedirs
+from os.path import exists, join, isdir, isfile, dirname
+from shutil import rmtree
 from markdown import markdown_to_html_node
+
+def generate_pages(src_dir: str, dest_dir: str, template_path: str) -> None:
+    if not exists(src_dir):
+        raise FileNotFoundError(f"Source directory {src_dir} does not exist.")
+    if not exists(dest_dir):
+        mkdir(dest_dir)
+    for item in listdir(src_dir):
+        src_path = join(src_dir, item)
+        dest_path = join(dest_dir, item)
+
+        if isfile(src_path):
+            if item.endswith(".md"):
+                dest_path = dest_path[:-3] + ".html"
+                generate_page(src_path, dest_path, template_path)
+        elif isdir(src_path):
+            generate_pages(src_path, dest_path, template_path)
+    
 
 def generate_page(from_path: str, to_path: str, template_path: str) -> None:
     """
@@ -25,9 +44,9 @@ def generate_page(from_path: str, to_path: str, template_path: str) -> None:
     html = node.to_html()
     title = extract_title(markdown_content)
     html_page = template_content.replace("{{ Title }}", title).replace("{{ Content }}", html)    
-    dest_dir = os.path.dirname(to_path)
+    dest_dir = dirname(to_path)
     if dest_dir:
-        os.makedirs(dest_dir, exist_ok=True)
+        makedirs(dest_dir, exist_ok=True)
     with open(to_path, "w") as f:
         f.write(html_page)
 

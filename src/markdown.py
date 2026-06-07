@@ -64,7 +64,10 @@ def block_to_html_node_heading(block: str) -> HTMLNode:
 
 def block_to_html_node_quote(block: str) -> HTMLNode:
     lines = block.split("\n")
-    quote_text = " ".join([line[1:] for line in lines])
+    new_lines = []
+    for line in lines:        
+        new_lines.append(line.lstrip(">").strip())
+    quote_text = " ".join(new_lines)
     children = text_to_children(quote_text)
     return ParentNode("blockquote", children)
 
