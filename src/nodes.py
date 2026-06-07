@@ -1,3 +1,10 @@
+"""
+Provides functions for parsing and splitting inline Markdown text into structured `TextNode` objects.
+
+Note: The parsing utilities in this module are primarily called by `markdown.py` 
+to handle the granular, inline text parsing (e.g., bold, italic, code, links, and images) 
+within each structural block.
+"""
 import re
 from textnode import TextNode, TextType
 

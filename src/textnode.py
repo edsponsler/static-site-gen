@@ -1,3 +1,12 @@
+"""
+Defines the `TextNode` data structure and utilities for inline Markdown elements.
+
+This module acts as a critical intermediate data layer for the project. The `nodes.py` 
+module extensively instantiates `TextNode` objects to represent chunks of parsed inline 
+Markdown (e.g., bold, italic, links, images). Furthermore, the `text_node_to_html_node` 
+function serves as the bridge used by `markdown.py` to convert these intermediate text 
+representations into final, renderable `LeafNode` HTML objects.
+"""
 from enum import Enum
 from htmlnode import LeafNode
 
@@ -37,7 +46,7 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     elif text_node.text_type == TextType.LINK:
         return LeafNode("a", text_node.text, props={"href": text_node.url})
     elif text_node.text_type == TextType.IMAGE:
-        return LeafNode("img", None, props={"src": text_node.url, "alt": text_node.text})
+        return LeafNode("img", "", props={"src": text_node.url, "alt": text_node.text})
     else:
         raise ValueError(f"Invalid text type: {text_node.text_type}")
     

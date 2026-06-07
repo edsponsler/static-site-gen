@@ -1,3 +1,12 @@
+"""
+This module establishes the preconditions for Markdown block processing.
+
+By strictly parsing and classifying Markdown blocks into precise `BlockType` enumerations,
+this module enforces a contract: any block returned and typed by these functions is
+guaranteed to adhere to its defined structural invariant. This guarantees downstream
+consumers (like `markdown.py`) can trust the classification and execute their parsing
+logic without needing to perform redundant validation checks.
+"""
 from enum import Enum
 
 class BlockType(Enum):

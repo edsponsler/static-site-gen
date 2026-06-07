@@ -1,3 +1,12 @@
+"""
+This module is responsible for parsing and rendering Markdown content into HTML Nodes.
+
+It acts as a downstream consumer of the contract established by `blocks.py`. Because
+`blocks.py` guarantees the strict preconditioning and type validation of each Markdown
+block, this module can safely execute its domain-specific transformation logic (such as
+stripping prefixes and parsing inline syntax) without performing redundant defensive
+validation steps on the structure of the blocks themselves.
+"""
 import re
 from blocks import BlockType, markdown_to_blocks, block_to_block_type
 from nodes import text_to_textnodes

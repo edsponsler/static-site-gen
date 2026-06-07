@@ -1,4 +1,13 @@
 class HTMLNode:
+    """
+    Base class representing a node in an HTML document tree.
+    
+    This class defines the foundational structure for an HTML element, 
+    including its tag, inner value, nested children, and attributes. 
+    While not typically instantiated directly, its subclasses (`LeafNode` 
+    and `ParentNode`) are heavily utilized and instantiated by the `markdown.py` 
+    and `textnode.py` modules during the parsing process.
+    """
     def __init__(
         self,
         tag: str | None = None,
@@ -26,6 +35,14 @@ class HTMLNode:
         return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
 
 class LeafNode(HTMLNode):
+    """
+    Represents an HTML node that contains no children.
+    
+    Leaf nodes represent the innermost elements of the HTML tree (e.g., raw text, 
+    `<a>`, `<img>`, `<b>` tags). Objects of this type are primarily instantiated 
+    by `text_node_to_html_node` in `textnode.py` and inline parsing functions 
+    within `markdown.py`.
+    """
     def __init__(
         self,
         tag: str | None,
@@ -45,6 +62,13 @@ class LeafNode(HTMLNode):
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
 
 class ParentNode(HTMLNode):
+    """
+    Represents an HTML node that contains nested child nodes.
+    
+    Parent nodes act as structural containers (e.g., `<div>`, `<ul>`, `<blockquote>`) 
+    and dictate the nested hierarchy of the HTML tree. Objects of this type are 
+    primarily instantiated by the block-level parser functions in `markdown.py`.
+    """
     def __init__(
         self,
         tag: str,

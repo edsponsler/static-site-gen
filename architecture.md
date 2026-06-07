@@ -117,7 +117,7 @@ classDiagram
 
 ## 5. Tying It All Together (`src/markdown.py`)
 
-The final phase (to be implemented) is the master wrapper function `markdown_to_html_node(markdown)`. It will utilize all the components described above to produce the final document tree.
+The `markdown.py` module contains the master wrapper function `markdown_to_html_node(markdown)`. It utilizes all the components described above to produce the final HTML document tree.
 
 ### Execution Flow for `markdown_to_html_node`:
 
@@ -147,9 +147,33 @@ flowchart TD
     H --> I("text_node_to_html_node()")
     I --> J[List of LeafNodes]
     
-    J --> K[Construct Block ParentNode\ne.g., p, h1, ul]
-    K --> L[Append to Document ParentNode\ne.g., div]
+    J --> K[Construct Block ParentNode<br/>e.g., p, h1, ul]
+    K --> L[Append to Document ParentNode<br/>e.g., div]
     
     L -- "Next block" --> D
     L -- "Done" --> M[Return Document ParentNode]
+```
+
+## 6. Site Orchestration & Generation (`main.py`, `generate_site.py`, `copystatic.py`)
+
+The final piece of the application is the actual pipeline that recursively processes an entire content directory and builds the public website.
+
+*   **`main.py`**: The entrypoint script. It orchestrates the process by clearing the `public` directory, copying static assets, and triggering the markdown-to-HTML generation.
+*   **`copystatic.py`**: Provides the `recurse_copy` function to safely duplicate all images, CSS, and other static assets from the `static` folder into the `public` destination directory.
+*   **`generate_site.py`**: Provides `generate_page` and `extract_title`. It reads a source Markdown file, uses `markdown_to_html_node` to parse the content into an HTML tree, extracts the `# Title`, and injects the resulting HTML into a standard `template.html` file before saving it to the destination path.
+
+```mermaid
+flowchart TD
+    A[main.py] --> B("recurse_copy(static, public)")
+    A --> C("generate_page(content, public)")
+    
+    C --> D[Read Markdown & Template]
+    D --> E("markdown_to_html_node()")
+    D --> F("extract_title()")
+    E --> G[HTML String]
+    F --> H[Title String]
+    
+    G --> I[Inject into template.html]
+    H --> I
+    I --> J[Write to public/index.html]
 ```

@@ -1,8 +1,21 @@
+"""
+Provides utilities for recursively copying static file assets from a source directory to a destination.
+
+Note: Unlike most other source files in this project, there are no unittests for this module.
+Instead, it outputs useful trace messages to stdout for debugging.
+"""
 from os import listdir, mkdir
 from os.path import exists, join, isfile
 from shutil import copy, rmtree
 
 def recurse_copy(src_dir: str, dest_dir: str) -> None:
+    """
+    Recursively copies the contents of src_dir to dest_dir.
+    
+    Args:
+        src_dir: The source directory.
+        dest_dir: The destination directory.
+    """
     if not exists(src_dir):
         raise FileNotFoundError(f"Source directory {src_dir} does not exist.")
     if exists(dest_dir):

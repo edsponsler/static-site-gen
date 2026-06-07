@@ -65,7 +65,7 @@ class TestTextNodeToHtmlNode(unittest.TestCase):
         node = TextNode("This is an image", TextType.IMAGE, "https://www.google.com")
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "img")
-        self.assertEqual(html_node.value, None)
+        self.assertEqual(html_node.value, "")
         self.assertEqual(
             html_node.props,
             {"src": "https://www.google.com", "alt": "This is an image"}
@@ -75,6 +75,3 @@ class TestTextNodeToHtmlNode(unittest.TestCase):
         node = TextNode("This is a text node", "invalid")
         with self.assertRaises(ValueError):
             text_node_to_html_node(node)
-
-if __name__ == "__main__":
-    unittest.main()
