@@ -9,7 +9,7 @@ from os.path import exists, join, isdir, isfile, dirname
 from shutil import rmtree
 from markdown import markdown_to_html_node
 
-def generate_pages(src_dir: str, dest_dir: str, template_path: str) -> None:
+def generate_pages(src_dir: str, dest_dir: str, template_path: str, basepath: str) -> None:
     if not exists(src_dir):
         raise FileNotFoundError(f"Source directory {src_dir} does not exist.")
     if not exists(dest_dir):
@@ -21,12 +21,12 @@ def generate_pages(src_dir: str, dest_dir: str, template_path: str) -> None:
         if isfile(src_path):
             if item.endswith(".md"):
                 dest_path = dest_path[:-3] + ".html"
-                generate_page(src_path, dest_path, template_path)
+                generate_page(src_path, dest_path, template_path, basepath)
         elif isdir(src_path):
-            generate_pages(src_path, dest_path, template_path)
+            generate_pages(src_path, dest_path, template_path, basepath)
     
 
-def generate_page(from_path: str, to_path: str, template_path: str) -> None:
+def generate_page(from_path: str, to_path: str, template_path: str, basepath: str) -> None:
     """
     Generates an HTML page from a markdown file using a template file.
     
@@ -34,6 +34,7 @@ def generate_page(from_path: str, to_path: str, template_path: str) -> None:
         from_path: Path to the source markdown file.
         to_path: Path where the generated HTML file will be saved.
         template_path: Path to the HTML template file.
+        basepath: The base URL path for the site.
     """
     print(f"Generating page from {from_path} to {to_path} using template {template_path}")
     with open(from_path, "r") as f:
@@ -44,6 +45,8 @@ def generate_page(from_path: str, to_path: str, template_path: str) -> None:
     html = node.to_html()
     title = extract_title(markdown_content)
     html_page = template_content.replace("{{ Title }}", title).replace("{{ Content }}", html)    
+    html_page = html_page.replace('href="/', f'href="{basepath}')
+    html_page = html_page.replace('src="/', f'src="{basepath}')
     dest_dir = dirname(to_path)
     if dest_dir:
         makedirs(dest_dir, exist_ok=True)
